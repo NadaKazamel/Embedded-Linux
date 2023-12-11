@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#Define the username and groupname
+
+username="yourName"
+groupname="FamilyName"
+
+#Check if the user already exists
+
+if grep -q "$username" /etc/passwd ; then
+	echo "This user $username already exists"
+else
+	sudo useradd "$username"
+	echo "The user $username is created"
+fi
+
+#Check if the group already exists
+
+if grep -q "$groupname" /etc/group ; then
+	echo "The group $groupname already exists"
+else
+	sudo groupadd "$groupname"
+	echo "The group $groupname is created"
+fi
+
+if getent group "$groupname" | grep -q "$username" ; then
+	echo "The user $username is already in the group $groupname"
+else
+	sudo usermod -aG "$groupname" "$username"
+	echo "The user $username is added in the group $groupname"
+fi 
+
+echo "User information:"
+grep "$username" /etc/passwd | cat
+
+echo "Group information:"
+getent group "$groupname"
